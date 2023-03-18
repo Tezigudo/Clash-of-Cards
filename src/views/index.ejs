@@ -10,9 +10,20 @@
 <body>
     EIEIEI
 
+    <button id="btn">Click me</button>
+
+    <span id="Testing"></span>
+
     <script>
       const socket = io();
       console.log(socket);
+
+
+      const btn = document.getElementById('btn');
+
+      btn.addEventListener('click', () => {
+        socket.emit('test', 'Hello World');
+      });
 
     </script>
 </body>

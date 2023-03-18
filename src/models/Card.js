@@ -14,10 +14,6 @@ const CardSchema = new Schema({
         type: String,
         default: ""
 
-    },
-    matchHistory: {
-        type: Array,
-        default: []
     }
 });
 

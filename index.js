@@ -36,8 +36,14 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    2
+
     console.log(socket.id);
+
+    socket.on('disconnect', () => {
+        console.log("User disconnected");
+    })
+
+    socket.on("test", () => {})
 });
 
 server.listen(3000, () => {
