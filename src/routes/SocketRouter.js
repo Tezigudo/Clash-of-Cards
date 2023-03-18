@@ -1,4 +1,5 @@
 const express = require('express');
+const deck = require('../models/Deck');
 
 
 
@@ -19,6 +20,17 @@ function SocketRouter(io) {
         io.emit("testQ", q);
         res.json({ "message": `Sent ${q}` }).status(200);
     });
+
+    router.get('/test2', (req, res) => {
+        console.log("test2")
+        deck1 = new deck();
+
+        deck1.initDeck();
+        console.log(deck1.deck);
+        res.header("Access-Control-Allow-Origin", "*");
+
+        res.json(deck1).status(200);
+    })
     return router;
 }
 

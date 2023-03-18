@@ -10,7 +10,7 @@ const DeckSchema = new Schema({
     }
 });
 
-DeckSchema.static.initCard = function () {
+DeckSchema.statics.initCard = async function () {
 
     const SpecialCard = [
         new Card({
@@ -36,8 +36,8 @@ DeckSchema.static.initCard = function () {
 
     ]
 
-    oridinary_card = Array.from({ length: 10 }, (x) => x + 1).forEach((_, i) => {
-        new Card({
+    oridinary_card = Array.from({ length: 10 }).map((_, i) => {
+        return new Card({
             name: `Card ${i + 1}`,
             value: i + 1,
             description: `This card is a normal card. It has a value of ${i + 1}`
@@ -46,19 +46,22 @@ DeckSchema.static.initCard = function () {
 
     all_card = oridinary_card.concat(SpecialCard);
 
-    all_card.forEach((card) => { card.save() })
+    await Promise.all(all_card.map(card => card.save()))
 }
 
-DeckSchema.method.createDeck = function () {
+DeckSchema.methods.createDeck = async function () {
 
     //check whether card is already in database or not
     //if not then create card
-    if (Card.count() === 0) {
-        this.initCard();
+
+
+    if (await Card.countDocuments() == 0) {
+        console.log("Card is not in database");
+        Deck.initCard();
     }
 
     // load card from database
-    const all_card = Card.find();
+    const all_card = await Card.find().exec();
     // create a deck of 20 cards that contain 0-10 and 3 of each special card
 
     const specialCardVal = [11, 12, 13];
@@ -71,10 +74,11 @@ DeckSchema.method.createDeck = function () {
             this.deck.push(all_card[specialCardVal[i - 10]]);
         }
     }
+    this.save()
 
 }
 
-DeckSchema.method.shuffle = function () {
+DeckSchema.methods.shuffle = function () {
     // shuffle the deck
 
     let currentIndex = this.deck.length, randomIndex;
@@ -90,11 +94,12 @@ DeckSchema.method.shuffle = function () {
         [this.deck[currentIndex], this.deck[randomIndex]] = [
             this.deck[randomIndex], this.deck[currentIndex]];
     }
+    this.save()
 
-    return array;
+    return this.deck;
 }
 
-DeckSchema.method.initDeck = function () {
+DeckSchema.methods.initDeck = function () {
     // create a deck
     // shuffle the deck
     // return the deck
@@ -103,7 +108,7 @@ DeckSchema.method.initDeck = function () {
     return this.deck;
 }
 
-DeckSchema.mothod.draw = function () {
+DeckSchema.methods.draw = function () {
     // draw a card from the deck
     // return the card
     // if the deck is empty, throw an error
