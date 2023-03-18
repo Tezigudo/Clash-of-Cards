@@ -13,4 +13,4 @@ const DeckSchema = new Schema({
 //     return this.save();
 // }
 
-module.exports = Deck = mongoose.model('player', DeckSchema);
+module.exports = Deck = mongoose.model('deck', DeckSchema);
