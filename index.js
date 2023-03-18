@@ -10,15 +10,17 @@ const io = require('socket.io')(server, {
 }); // Create a socket.io server
 
 
-const socketRouter = require('./routes/SocketRouter')(io); // Import the SocketRouter
+const socketRouter = require('./src/routes/SocketRouter')(io); // Import the SocketRouter
 
 app.use('/api', socketRouter); // Use the SocketRouter (api/
 
 
 app.set("view engine", "ejs"); // Set the view engine to ejs
 
+app.set('views', __dirname + '/src/views'); // Set the views folder to src/views
+
 // Set the body parser to urlencoded (for forms
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json()) // Set the body parser to json
 
@@ -31,6 +33,6 @@ io.on('connection', (socket) => {
     console.log(socket.id);
 });
 
-server.listen(3000, ()=> {
+server.listen(3000, () => {
     console.log("Server is running on port 3000");
 });
