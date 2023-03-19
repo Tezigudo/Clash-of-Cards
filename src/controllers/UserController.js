@@ -6,8 +6,8 @@ const jwt = require('jwt-then');
 
 
 async function register(req, res) {
-    console.log("bodyyyyyyy" + req.body)
-    const { playerName, email, password } = req.body;
+    const { name, email, password } = req.body;
+
 
     const emailRegex = /[@gmail.com|@yahoo.com|@hotmail.com|@live.com]/
 
@@ -20,8 +20,7 @@ async function register(req, res) {
     }
 
     const playerExists = await Player.findOne({
-        email,
-        password: sha256(password + process.env.SALT)
+        email
     });
 
     if (playerExists) {
@@ -29,15 +28,15 @@ async function register(req, res) {
     }
 
     const player = new Player({
-        playerName,
-        email,
+        name: name,
+        email: email,
         password: sha256(password + process.env.SALT)
     })
 
     await player.save();
 
     res.json({
-        message: `Player ${playerName} registered successfully`
+        message: `Player ${name} registered successfully`
     })
 }
 
@@ -53,7 +52,7 @@ async function login(req, res) {
         throw "Email and Password didnt match";
     }
 
-    const token = jwt.sign({ id: player.id }, process.env.SECRET)
+    const token = await jwt.sign({ id: player.id }, process.env.SECRET)
 
     res.json({
         messagse: "Login successful",

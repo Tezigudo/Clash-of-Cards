@@ -15,7 +15,6 @@ const socketRouter = require('./src/routes/SocketRouter')(io); // Import the Soc
 
 
 app.use('/api', socketRouter); // Use the SocketRouter (api/
-app.use(require('./src/routes/UserRouter')); // Use the UserRouter (api/user/)
 
 app.set("view engine", "ejs"); // Set the view engine to ejs
 app.set('views', __dirname + '/src/views'); // Set the views folder to src/views
@@ -31,6 +30,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json()) // Set the body parser to json
 
+app.use('/user', require('./src/routes/UserRouter')); // Use the UserRouter (api/user/)
+
 
 app.get('/', (req, res) => {
     res.render("index");
@@ -44,7 +45,7 @@ io.on('connection', (socket) => {
         console.log("User disconnected");
     })
 
-    socket.on("test", () => {})
+    socket.on("test", () => { })
 });
 
 server.listen(3000, () => {
