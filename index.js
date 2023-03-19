@@ -9,6 +9,14 @@ const io = require('socket.io')(server, {
         origin: "*"
     }
 }); // Create a socket.io server
+const socketioJwt = require('socketio-jwt'); // Import socketio-jwt
+const loginRequired = require('./src/middlewares/auth');
+
+io.use(socketioJwt.authorize({
+    secret: process.env.SECRET,
+    handshake: true,
+    auth_header_required: true
+}))
 
 
 const socketRouter = require('./src/routes/SocketRouter')(io); // Import the SocketRouter
@@ -33,12 +41,22 @@ app.use(express.json()) // Set the body parser to json
 app.use('/user', require('./src/routes/UserRouter')); // Use the UserRouter (api/user/)
 
 
-app.get('/', (req, res) => {
+app.get('/', loginRequired, (req, res) => {
     res.render("index");
 });
 
-io.on('connection', (socket) => {
+app.get('/login', (req, res) => {
+    res.render("login");
+})
 
+app.get('/register', (req, res) => {
+    res.render("register");
+})
+
+io.on('connection', (socket) => {
+    const userId = socket.decoded_token.userId;
+
+    console.log(`User connected: ${userId}`);
     console.log(socket.id);
 
     socket.on('disconnect', () => {

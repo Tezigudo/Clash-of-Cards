@@ -14,7 +14,7 @@ function SocketRouter(io) {
     router.get('/test', (req, res) => {
         const q = req.query.q;
         if (!q) {
-            res.json({ "message": "No query" }).status(401);
+            res.json({ "mes sage": "No query" }).status(401);
         }
 
         io.emit("testQ", q);
@@ -32,5 +32,6 @@ function SocketRouter(io) {
     })
     return router;
 }
+
 
 module.exports = SocketRouter;

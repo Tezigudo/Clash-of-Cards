@@ -52,7 +52,7 @@ async function login(req, res) {
         throw "Email and Password didnt match";
     }
 
-    const token = await jwt.sign({ id: player.id }, process.env.SECRET)
+    const token = await jwt.sign({ id: player.id }, process.env.SECRET, { expiresIn: '1h' })
 
     res.json({
         messagse: "Login successful",
@@ -60,6 +60,7 @@ async function login(req, res) {
     })
 
 }
+
 
 module.exports = {
     register,
