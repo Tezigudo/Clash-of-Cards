@@ -64,17 +64,19 @@ DeckSchema.methods.createDeck = async function () {
     const all_card = await Card.find().exec();
     // create a deck of 20 cards that contain 0-10 and 3 of each special card
 
+    all_card.sort((a, b) => a.value - b.value);
+
     const specialCardVal = [11, 12, 13];
 
     for (let i = 0; i < 20; i++) {
         if (i < 10) {
             this.deck.push(all_card[i]);
-        }
-        else {
-            this.deck.push(all_card[specialCardVal[i - 10]]);
+        } else {
+            this.deck.push(all_card[specialCardVal[(i - 10)%3]]);
         }
     }
     this.save()
+
 
 }
 
@@ -115,7 +117,7 @@ DeckSchema.methods.draw = function () {
     if (this.deck.length === 0) {
         throw new Error("Deck is empty");
     }
-    return this.deck.pop();
+    return this.deck.shift();
 }
 
 module.exports = Deck = mongoose.model('deck', DeckSchema);

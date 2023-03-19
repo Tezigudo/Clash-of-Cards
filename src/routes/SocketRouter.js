@@ -21,12 +21,14 @@ function SocketRouter(io) {
         res.json({ "message": `Sent ${q}` }).status(200);
     });
 
-    router.get('/test2', (req, res) => {
+    router.get('/test2', async (req, res) => {
         console.log("test2")
         deck1 = new deck();
 
-        deck1.initDeck();
+        await deck1.initDeck();
+
         console.log(deck1.deck);
+
         res.header("Access-Control-Allow-Origin", "*");
 
         res.json(deck1).status(200);

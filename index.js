@@ -15,6 +15,7 @@ const socketRouter = require('./src/routes/SocketRouter')(io); // Import the Soc
 
 
 app.use('/api', socketRouter); // Use the SocketRouter (api/
+app.use(require('./src/routes/UserRouter')); // Use the UserRouter (api/user/)
 
 app.set("view engine", "ejs"); // Set the view engine to ejs
 app.set('views', __dirname + '/src/views'); // Set the views folder to src/views
