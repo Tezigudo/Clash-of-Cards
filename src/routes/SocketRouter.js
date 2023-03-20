@@ -14,7 +14,7 @@ function SocketRouter(io) {
     router.get('/test', (req, res) => {
         const q = req.query.q;
         if (!q) {
-            res.json({ "mes sage": "No query" }).status(401);
+            res.json({ "message": "No query" }).status(401);
         }
 
         io.emit("testQ", q);

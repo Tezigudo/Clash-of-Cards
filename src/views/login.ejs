@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+</head>
+
+<body>
+
+    <h1>Login</h1>
+
+    <p>
+        you are not login yet please login to continue
+    </p>
+    <form method="post" id="loginForm">
+        <label>
+            Email:
+            <input type="text" name="email" id="emailfield" required>
+        </label>
+        <br>
+        <label>
+            Password:
+            <input type="password" name="password" id="passwordField" required>
+        </label>
+        <br>
+        <button type="submit" id="loginBth">Login</button>
+    </form>
+
+    <script>
+        // const loginBth = document.getElementById('loginBth');
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // prevent the page from reloading
+
+            const email = document.getElementById('emailfield').value;
+            const password = document.getElementById('passwordField').value;
+
+            const resp = await fetch('/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+
+            if (!resp.ok) {
+                window.location.reload();
+                alert('Invalid email or password');
+            } else {
+                const data = await resp.json();
+
+                window.location.href = '/';
+            }
+
+        });
+    </script>
+</body>
+
+</html>

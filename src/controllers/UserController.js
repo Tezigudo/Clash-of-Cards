@@ -42,6 +42,12 @@ async function register(req, res) {
 
 async function login(req, res) {
 
+    if (await req.cookies.token) {
+        res.status(300).json({
+            message: "You are already logged in"
+        })
+    }
+
     const { email, password } = req.body;
     const player = await Player.findOne({
         email,
@@ -54,11 +60,28 @@ async function login(req, res) {
 
     const token = await jwt.sign({ id: player.id }, process.env.SECRET, { expiresIn: '1h' })
 
+    res.user = player;
+    res.cookie('token', token, { httpOnly: true });
+
+    res.setHeader('Authorization', 'Bearer ' + token);
+
     res.json({
         messagse: "Login successful",
         token
     })
 
+}
+
+async function logout(req, res) {
+    if (!req.cookies.token) {
+        res.json({
+            message: "You are not logged in"
+        })
+    }
+    res.clearCookie('token');
+    res.json({
+        message: "Logout successful"
+    })
 }
 
 

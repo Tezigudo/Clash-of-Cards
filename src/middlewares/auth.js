@@ -1,6 +1,5 @@
 // const jwt = require('jwt-then');
 
-
 // modules.exports = async (req, res, next) => {
 
 //     try {
@@ -15,16 +14,35 @@
 //         next();
 //     } catch (err) {
 //         res.status(401).json({
-//             message: "Forbidden"
+//             message: "Forbidden" 
 //         })
 //     }
 // };
 
+
 function loginRequired(req, res, next) {
-    if (!req.user) {
-        throw "Unauthorized user! Please login to continue"
+
+
+    if (!req.cookies.token) {
+
+        console.error("Unauthorized user! Please login to continue")
+
+        return res.redirect('/login');
+    }
+
+    req.headers.authorization = `Bearer ${req.cookies.token}`;
+
+    next();
+}
+
+function logoutRequired(req, res, next) {
+    if (req.cookies.token) {
+        return res.redirect('/');
     }
     next();
 }
 
-module.exports = loginRequired;
+module.exports = {
+    loginRequired,
+    logoutRequired
+};

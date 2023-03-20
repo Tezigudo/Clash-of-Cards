@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const app = express(); // Create an express app
+const cors = require('cors');
 
 const server = require('http').createServer(app); // Create a server
 const io = require('socket.io')(server, {
@@ -10,18 +12,20 @@ const io = require('socket.io')(server, {
     }
 }); // Create a socket.io server
 const socketioJwt = require('socketio-jwt'); // Import socketio-jwt
-const loginRequired = require('./src/middlewares/auth');
+const { loginRequired, logoutRequired } = require('./src/middlewares/auth');
 
 io.use(socketioJwt.authorize({
     secret: process.env.SECRET,
     handshake: true,
-    auth_header_required: true
+    auth_header_required: true,
+    auth_header_name: 'Authorization'
 }))
 
 
 const socketRouter = require('./src/routes/SocketRouter')(io); // Import the SocketRouter
 
-
+app.use(cookieParser())
+app.use(cors())
 app.use('/api', socketRouter); // Use the SocketRouter (api/
 
 app.set("view engine", "ejs"); // Set the view engine to ejs
@@ -40,19 +44,24 @@ app.use(express.json()) // Set the body parser to json
 
 app.use('/user', require('./src/routes/UserRouter')); // Use the UserRouter (api/user/)
 
-
+// Render the index page
 app.get('/', loginRequired, (req, res) => {
+    res.locals.token = req.cookies.token;
     res.render("index");
 });
 
-app.get('/login', (req, res) => {
-    res.render("login");
+// Render the login page
+app.get('/login', logoutRequired, (req, res) => {
+    res.render("login", { message: "" });
 })
 
+// Render the register page
 app.get('/register', (req, res) => {
     res.render("register");
 })
 
+
+// socket.io stuff
 io.on('connection', (socket) => {
     const userId = socket.decoded_token.userId;
 
