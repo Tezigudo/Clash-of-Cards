@@ -64,6 +64,8 @@ async function login(req, res) {
     res.cookie('token', token, { httpOnly: true });
 
     res.setHeader('Authorization', 'Bearer ' + token);
+    console.log(res.headersSent)
+
 
     res.json({
         messagse: "Login successful",

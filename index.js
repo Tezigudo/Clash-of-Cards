@@ -4,11 +4,17 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const app = express(); // Create an express app
 const cors = require('cors');
+const SessionMiddleware = require('./src/middlewares/session');
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy;
+const Player = require('./src/models/player');
+
 
 const server = require('http').createServer(app); // Create a server
 const io = require('socket.io')(server, {
     cors: {
-        origin: "*"
+        origin: "*",
+        method: ["GET", "POST"]
     }
 }); // Create a socket.io server
 const socketioJwt = require('socketio-jwt'); // Import socketio-jwt
@@ -24,8 +30,18 @@ io.use(socketioJwt.authorize({
 
 const socketRouter = require('./src/routes/SocketRouter')(io); // Import the SocketRouter
 
+app.use(SessionMiddleware)
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(cookieParser())
+
+passport.use(new LocalStrategy(Use))
+passport.serializeUser(Player.serializeUser())
+passport.deserializeUser(Player.deserializeUser())
+
 app.use(cors())
+
+
 app.use('/api', socketRouter); // Use the SocketRouter (api/
 
 app.set("view engine", "ejs"); // Set the view engine to ejs
