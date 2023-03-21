@@ -61,10 +61,12 @@ async function login(req, res) {
     const token = await jwt.sign({ id: player.id }, process.env.SECRET, { expiresIn: '1h' })
 
     res.user = player;
-    res.cookie('token', token, { httpOnly: true });
+    res.cookie('token', token);
 
-    res.setHeader('Authorization', 'Bearer ' + token);
-    console.log(res.headersSent)
+    // res.setHeader('Authorization', 'Bearer ' + token);
+    // console.log("res: ", res.header())
+    console.log('header sent? ' + res.headersSent)
+    res.set('Authorization', 'Bearer ' + token)
 
 
     res.json({
@@ -89,5 +91,6 @@ async function logout(req, res) {
 
 module.exports = {
     register,
-    login
+    login,
+    logout
 }

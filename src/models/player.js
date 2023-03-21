@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
 
 const PlayerSchema = new Schema({
@@ -27,7 +26,5 @@ const PlayerSchema = new Schema({
         default: []
     }
 });
-
-PlayerSchema.plugin(passportLocalMongoose);
 
 module.exports = Player = mongoose.model('player', PlayerSchema);

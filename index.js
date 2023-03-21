@@ -1,13 +1,13 @@
+"use strict";
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const app = express(); // Create an express app
 const cors = require('cors');
-const SessionMiddleware = require('./src/middlewares/session');
-const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy;
-const Player = require('./src/models/player');
+// const SessionMiddleware = require('./src/middlewares/session');
+const socketioAuth = require('socketio-auth');
 
 
 const server = require('http').createServer(app); // Create a server
@@ -18,28 +18,54 @@ const io = require('socket.io')(server, {
     }
 }); // Create a socket.io server
 const socketioJwt = require('socketio-jwt'); // Import socketio-jwt
-const { loginRequired, logoutRequired } = require('./src/middlewares/auth');
+const { loginRequired, logoutRequired, verifyToken } = require('./src/middlewares/auth');
+const Player = require('./src/models/Player');
 
 io.use(socketioJwt.authorize({
     secret: process.env.SECRET,
     handshake: true,
-    auth_header_required: true,
-    auth_header_name: 'Authorization'
+    jwt: true
 }))
 
 
 const socketRouter = require('./src/routes/SocketRouter')(io); // Import the SocketRouter
 
-app.use(SessionMiddleware)
-app.use(passport.initialize())
-app.use(passport.session())
+// app.use(SessionMiddleware)
+
 app.use(cookieParser())
+// app.use(verifyToken)
 
-passport.use(new LocalStrategy(Use))
-passport.serializeUser(Player.serializeUser())
-passport.deserializeUser(Player.deserializeUser())
+socketioAuth(io, {
+    authenticate: async (socket, data, callback) => {
+        try {
+            const token = socket.request.cookies.token;
+            const decoded = await jwt.verify(token, process.env.SECRET);
+            const playerId = decoded.id;
 
-app.use(cors())
+            const player = await Player.findById(playerId);
+
+            if (!player) {
+                throw new Error("Player not found");
+            }
+
+            socket.player = player;
+
+            return callback(null, true)
+        } catch (error) {
+            return callback(error);
+        }
+    }, postAuthenticate: (socket) => {
+        // Do any post-authentication tasks here
+        console.log("Authenticated: " + socket.player.username)
+    },
+    disconnect: (socket) => {
+        // Do any tasks on disconnect here
+        console.log("Disconnected: " + socket.player.username)
+    }
+})
+app.use(cors({
+    origin: "*",
+}))
 
 
 app.use('/api', socketRouter); // Use the SocketRouter (api/
@@ -54,14 +80,14 @@ mongoose.connect(process.env.mongoURI, { useNewUrlParser: true, useUnifiedTopolo
 });
 
 // Set the body parser to urlencoded (for forms and stuff)
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json()) // Set the body parser to json
 
 app.use('/user', require('./src/routes/UserRouter')); // Use the UserRouter (api/user/)
 
 // Render the index page
-app.get('/', loginRequired, (req, res) => {
+app.get('/', loginRequired, verifyToken, (req, res) => {
     res.locals.token = req.cookies.token;
     res.render("index");
 });
@@ -78,9 +104,9 @@ app.get('/register', (req, res) => {
 
 
 // socket.io stuff
+
 io.on('connection', (socket) => {
     const userId = socket.decoded_token.userId;
-
     console.log(`User connected: ${userId}`);
     console.log(socket.id);
 
@@ -88,8 +114,13 @@ io.on('connection', (socket) => {
         console.log("User disconnected");
     })
 
+    socket.onAny((event, ...args) => {
+        console.log(event, args)
+    })
+
     socket.on("test", () => { })
 });
+
 
 server.listen(3000, () => {
     console.log("Server is running on port 3000");

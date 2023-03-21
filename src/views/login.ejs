@@ -26,6 +26,7 @@
         <br>
         <button type="submit" id="loginBth">Login</button>
     </form>
+    Not have id? click <button id="regisbtn">here</button> to register
 
     <script>
         // const loginBth = document.getElementById('loginBth');
@@ -57,6 +58,13 @@
                 window.location.href = '/';
             }
 
+        });
+
+        const regisbtn = document.getElementById('regisbtn');
+        regisbtn.addEventListener('click', async (e) => {
+            e.preventDefault(); // prevent the page from reloading
+
+            window.location.href = '/register';
         });
     </script>
 </body>

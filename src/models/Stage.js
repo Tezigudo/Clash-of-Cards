@@ -3,13 +3,16 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const StageSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
     player1BoardID: {
         type: ObjectId,
         required: true
     },
     player2BoardID: {
         type: ObjectId,
-        required: true
     },
     currentTurn: {
         type: Number,
@@ -26,5 +29,5 @@ const StageSchema = new Schema({
     }
 });
 
-
+module.exports = Stage = mongoose.model('stage', StageSchema);
 

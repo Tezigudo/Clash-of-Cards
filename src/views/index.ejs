@@ -12,18 +12,18 @@
 <body>
 
   <button id="btn">Click me</button>
+  <button id="logoutBtn">Log out</button>
 
   <span id="Testing"></span>
 
   <script>
-    console.log(document.cookie.token)
+    console.log("EIEIIEIEIEI   " + document.cookie)
     const socket = io('http://localhost:3000', {
       auth: {
         token: document.cookie.token
       }
     });
 
-    socket.on("connect")
 
 
     const btn = document.getElementById('btn');
@@ -31,6 +31,31 @@
     btn.addEventListener('click', () => {
       socket.emit('test', 'Hello World');
     });
+
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    logoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // prevent the page from reloading
+
+      const resp = await fetch('/user/logout', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+      })
+
+      if (!resp.ok) {
+        window.location.reload();
+      } else {
+        const data = await resp.json();
+
+        window.location.href = '/';
+      }
+      socket.emit('logout');
+    });
+
+
 
   </script>
 </body>
