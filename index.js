@@ -20,6 +20,7 @@ const io = require('socket.io')(server, {
 const socketioJwt = require('socketio-jwt'); // Import socketio-jwt
 const { loginRequired, logoutRequired, verifyToken } = require('./src/middlewares/auth');
 const Player = require('./src/models/Player');
+const helmet = require('helmet');
 
 io.use(socketioJwt.authorize({
     secret: process.env.SECRET,
@@ -33,6 +34,7 @@ const socketRouter = require('./src/routes/SocketRouter')(io); // Import the Soc
 // app.use(SessionMiddleware)
 
 app.use(cookieParser())
+// app.use(helmet())
 // app.use(verifyToken)
 
 socketioAuth(io, {

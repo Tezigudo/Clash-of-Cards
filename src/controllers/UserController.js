@@ -63,9 +63,6 @@ async function login(req, res) {
     res.user = player;
     res.cookie('token', token);
 
-    // res.setHeader('Authorization', 'Bearer ' + token);
-    // console.log("res: ", res.header())
-    console.log('header sent? ' + res.headersSent)
     res.set('Authorization', 'Bearer ' + token)
 
 
@@ -87,6 +84,7 @@ async function logout(req, res) {
         message: "Logout successful"
     })
 }
+
 
 
 module.exports = {

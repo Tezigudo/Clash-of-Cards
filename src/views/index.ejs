@@ -17,10 +17,10 @@
   <span id="Testing"></span>
 
   <script>
-    console.log("EIEIIEIEIEI   " + document.cookie)
+    const token = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token=')).split('=')[1];
     const socket = io('http://localhost:3000', {
       auth: {
-        token: document.cookie.token
+        token: token
       }
     });
 

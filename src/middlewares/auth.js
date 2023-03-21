@@ -1,7 +1,6 @@
 const jwt = require('jwt-then');
 
 async function verifyToken(req, res, next) {
-
     try {
 
         if (!req.headers.authorization) {
@@ -10,6 +9,7 @@ async function verifyToken(req, res, next) {
         const token = req.headers.authorization.split(" ")[1];
 
         const payload = await jwt.verify(token, process.env.SECRET)
+        console.log(payload)
         req.payload = payload;
         next();
     } catch (err) {
@@ -47,10 +47,8 @@ function profile(req, res, next) {
         return res.status(401).json({ message: 'Invalid token' });
 
     }
-
     res.send(req.user);
     next();
-
 };
 
 
