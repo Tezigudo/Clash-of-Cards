@@ -2,20 +2,22 @@ const jwt = require('jwt-then');
 
 async function verifyToken(req, res, next) {
     try {
-
         if (!req.headers.authorization) {
             throw "Forbidden"
         }
         const token = req.headers.authorization.split(" ")[1];
 
         const payload = await jwt.verify(token, process.env.SECRET)
-        console.log(payload)
         req.payload = payload;
         next();
     } catch (err) {
+        console.error(err)
+        res.clearCookie('token'); // clear cookie ( so user will logout)
         res.status(401).json({
             message: "Forbidden"
         })
+        res.redirect('/login')
+
     }
 };
 

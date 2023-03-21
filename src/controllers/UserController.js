@@ -58,7 +58,7 @@ async function login(req, res) {
         throw "Email and Password didnt match";
     }
 
-    const token = await jwt.sign({ id: player.id }, process.env.SECRET, { expiresIn: '1h' })
+    const token = await jwt.sign({ id: player.id, name: player.name }, process.env.SECRET, { expiresIn: '1h' })
 
     res.user = player;
     res.cookie('token', token);

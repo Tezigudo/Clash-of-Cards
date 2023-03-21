@@ -17,20 +17,51 @@
   <span id="Testing"></span>
 
   <script>
+    "use strict"
     const token = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token=')).split('=')[1];
     const socket = io('http://localhost:3000', {
       auth: {
-        token: token
+        token: 'Bearer' + token
+      },
+      extraHeaders: {
+        Authorization: 'Bearer ' + token,
       }
     });
 
+    console.log(socket)
 
+
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
+
+
+    socket.on('disconnect', (reason) => {
+      console.log('disconnect', reason)
+    })
+
+    socket.on('error', (error) => {
+      console.log('error: ', error)
+    })
+
+    socket.on('unauthorized', (error) => {
+      console.log('unauthorized: ', error)
+    })
 
     const btn = document.getElementById('btn');
 
+    const i = 1;
+
     btn.addEventListener('click', () => {
-      socket.emit('test', 'Hello World');
+      socket.emit('test');
     });
+
+    socket.on("Test", (player_name) => {
+      var TestSpan = document.getElementById('Testing');
+      var item = document.createElement('li');
+      item.textContent = `${player_name}: ${i++}`
+      TestSpan.appendChild(item);
+    })
 
     const logoutBtn = document.getElementById('logoutBtn');
 
@@ -54,7 +85,6 @@
       }
       socket.emit('logout');
     });
-
 
 
   </script>
