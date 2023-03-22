@@ -38,41 +38,6 @@ app.use(cookieParser())
 // app.use(helmet())
 // app.use(verifyToken)
 
-// socketioAuth(io, {
-//     authenticate: async (socket, data, callback) => {
-//         try {
-//             const token = socket.request.cookies.token;
-//             const decoded = await jwt.verify(token, process.env.SECRET);
-//             const playerId = decoded.id;
-
-//             const player = await Player.findById(playerId);
-
-//             if (!player) {
-//                 throw new Error("Player not found");
-//             }
-
-//             console.log(player.id)
-//             console.log("Authenticated: " + player.name)
-
-
-//             socket.player = player;
-
-//             return callback(null, true)
-//         } catch (error) {
-//             console.log('Authentication error: ' + error.message);
-//             return callback(error);
-//         }
-//     }, postAuthenticate: (socket) => {
-//         // Do any post-authentication tasks here
-//         console.log('eieieiei')
-//         // console.log("Authenticated: " + socket.player.name)
-//     },
-//     disconnect: (socket) => {
-//         // Do any tasks on disconnect here
-//         // console.log("Disconnected: " + socket.player.name)
-//         console.log("Disconnedt eiei")
-//     }
-// })
 
 app.use(cors({
     origin: "*",
@@ -104,7 +69,7 @@ app.use('/user', require('./src/routes/UserRouter')); // Use the UserRouter (api
 // Render the index page
 app.get('/', loginRequired, verifyToken, (req, res) => {
     res.locals.token = req.cookies.token;
-    res.render("index");
+    res.render("index", { name: req.payload.name, id: req.payload.id });
 });
 
 // Render the login page
@@ -124,7 +89,7 @@ io.on('connection', (socket) => {
     const userId = socket.decoded_token.userId;
     console.log(`User connected: ${userId}`);
 
-    console.log(socket.handshake.auth)
+    // console.log('handshake: ', socket.handshake.auth)
 
     socket.on('disconnect', () => {
         console.log("User disconnected");

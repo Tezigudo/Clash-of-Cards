@@ -10,6 +10,7 @@
 </head>
 
 <body>
+  <h1>Welcome back <%= name %></h1>
 
   <button id="btn">Click me</button>
   <button id="logoutBtn">Log out</button>
@@ -25,11 +26,23 @@
       },
       extraHeaders: {
         Authorization: 'Bearer ' + token,
-      }
+      },
+      query: `token=${token}`
     });
 
-    console.log(socket)
+    socket.on('connect', () => {
+      console.log('socket connected')
 
+      socket.emit('authenticate', {
+        token: token
+      })
+        .on('authenticated', () => {
+          console.log("authenticated");
+        })
+        .on('unauthorized', (error) => {
+          console.log('unauthorized: ', JSON.stringify(error.data))
+        })
+    })
 
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
@@ -44,19 +57,17 @@
       console.log('error: ', error)
     })
 
-    socket.on('unauthorized', (error) => {
-      console.log('unauthorized: ', error)
-    })
+
 
     const btn = document.getElementById('btn');
 
-    const i = 1;
+    let i = 1;
 
     btn.addEventListener('click', () => {
       socket.emit('test');
     });
 
-    socket.on("Test", (player_name) => {
+    socket.on("test", (player_name) => {
       var TestSpan = document.getElementById('Testing');
       var item = document.createElement('li');
       item.textContent = `${player_name}: ${i++}`
