@@ -99,8 +99,8 @@ io.on('connection', (socket) => {
         console.log(event, args)
     })
 
-    socket.on("test", () => {
-        io.emit("test", userId)
+    socket.on("test", (playerName) => {
+        io.emit("test", playerName)
     })
 });
 

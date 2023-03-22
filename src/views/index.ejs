@@ -10,7 +10,8 @@
 </head>
 
 <body>
-  <h1>Welcome back <%= name %></h1>
+  <h1>Welcome back <%= name %>
+  </h1>
 
   <button id="btn">Click me</button>
   <button id="logoutBtn">Log out</button>
@@ -64,13 +65,13 @@
     let i = 1;
 
     btn.addEventListener('click', () => {
-      socket.emit('test');
+      socket.emit('test', "<%-name  %>");
     });
 
-    socket.on("test", (player_name) => {
+    socket.on("test", (playerName) => {
       var TestSpan = document.getElementById('Testing');
       var item = document.createElement('li');
-      item.textContent = `${player_name}: ${i++}`
+      item.textContent = `${playerName}: ${i++}`
       TestSpan.appendChild(item);
     })
 
