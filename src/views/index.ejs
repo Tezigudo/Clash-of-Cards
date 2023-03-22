@@ -1,30 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="/socket.io/socket.io.js"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
+
 <body>
-    EIEIEI
+  <h1>Welcome back <%= name %></h1>
 
-    <button id="btn">Click me</button>
+  <button id="btn">Click me</button>
+  <button id="logoutBtn">Log out</button>
 
-    <span id="Testing"></span>
+  <span id="Testing"></span>
 
-    <script>
-      const socket = io();
-      console.log(socket);
+  <script>
+    "use strict"
+    const token = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token=')).split('=')[1];
+    const socket = io('http://localhost:3000', {
+      auth: {
+        token: 'Bearer' + token
+      },
+      extraHeaders: {
+        Authorization: 'Bearer ' + token,
+      },
+      query: `token=${token}`
+    });
+
+    socket.on('connect', () => {
+      console.log('socket connected')
+
+      socket.emit('authenticate', {
+        token: token
+      })
+        .on('authenticated', () => {
+          console.log("authenticated");
+        })
+        .on('unauthorized', (error) => {
+          console.log('unauthorized: ', JSON.stringify(error.data))
+        })
+    })
+
+    socket.on("connect_error", (err) => {
+      console.log(`connect_error due to ${err.message}`);
+    });
 
 
-      const btn = document.getElementById('btn');
+    socket.on('disconnect', (reason) => {
+      console.log('disconnect', reason)
+    })
 
-      btn.addEventListener('click', () => {
-        socket.emit('test', 'Hello World');
-      });
+    socket.on('error', (error) => {
+      console.log('error: ', error)
+    })
 
-    </script>
+
+
+    const btn = document.getElementById('btn');
+
+    let i = 1;
+
+    btn.addEventListener('click', () => {
+      socket.emit('test');
+    });
+
+    socket.on("test", (player_name) => {
+      var TestSpan = document.getElementById('Testing');
+      var item = document.createElement('li');
+      item.textContent = `${player_name}: ${i++}`
+      TestSpan.appendChild(item);
+    })
+
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    logoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // prevent the page from reloading
+
+      const resp = await fetch('/user/logout', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+      })
+
+      if (!resp.ok) {
+        window.location.reload();
+      } else {
+        const data = await resp.json();
+
+        window.location.href = '/';
+      }
+      socket.emit('logout');
+    });
+
+
+  </script>
 </body>
+
 </html>
