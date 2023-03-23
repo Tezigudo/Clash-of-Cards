@@ -16,7 +16,6 @@ const PlayerSchema = new Schema({
         required: true
 
     },
-
     winCount: {
         type: Number,
         default: 0
@@ -24,6 +23,11 @@ const PlayerSchema = new Schema({
     matchHistory: {
         type: Array,
         default: []
+    },
+    status:{
+        type: String,
+        enum: ['Online', 'Playing','Offline'],
+        default: 'Offline'
     }
 });
 

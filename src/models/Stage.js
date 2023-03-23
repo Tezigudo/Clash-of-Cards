@@ -9,14 +9,17 @@ const StageSchema = new Schema({
     },
     player1BoardID: {
         type: ObjectId,
-        required: true
+        required: true,
+        ref: 'board'
     },
     player2BoardID: {
         type: ObjectId,
+        required: true,
+        ref: 'board'
     },
     currentTurn: {
         type: Number,
-        default: 0 // 0 for player1, 1 for player2
+        default: 0 // 0 for player1, 1 for player2 2 for calculating
     },
     round: {
         type: Number,
