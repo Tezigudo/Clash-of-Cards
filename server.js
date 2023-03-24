@@ -35,13 +35,15 @@ io.on('connection', (socket) => {
         console.log("User disconnected");
     })
 
-    socket.onAny((event, ...args) => {
+    socket.onAny((event, ...args) => {"?"
         console.log(event, args)
     })
 
     socket.on("test", (playerName) => {
         io.emit("test", playerName)
     })
+
+    socket.on("createGame", (game) => {});
 });
 
 module.exports = {

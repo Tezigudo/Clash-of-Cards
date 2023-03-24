@@ -1,11 +1,15 @@
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
-const Stage = require('./Stage');
-const Board = require('./Board');
-const Player = require('./Player');
+
 const Schema = mongoose.Schema;
 
 const gameRoomSchema = new Schema({
+    roomId: {
+        type: String,
+        required: true,
+        immutable: true,
+        unique: true
+    },
     name: {
         type: String,
         required: true
@@ -47,4 +51,10 @@ gameRoomSchema.method.startGame = function () {
     this.save();
 }
 
-module.exports = gameRoom = mongoose.model('gameRoom', gameRoomSchema);
+gameRoomSchema.method.finishGame = function () {
+    this.status = 'Finished';
+    this.save();
+}
+
+gameRoom = mongoose.model('gameRoom', gameRoomSchema);
+module.exports = gameRoom;

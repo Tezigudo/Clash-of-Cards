@@ -32,4 +32,4 @@ BoardSchema.methods.initBoard = function () {
 
 }
 
-module.exports = Board = mongoose.model('player', BoardSchema);
+module.exports = Board = mongoose.model('board', BoardSchema);

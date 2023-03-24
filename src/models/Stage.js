@@ -5,7 +5,8 @@ const Schema = mongoose.Schema;
 const StageSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        reference: 'gameRoom'
     },
     player1BoardID: {
         type: ObjectId,

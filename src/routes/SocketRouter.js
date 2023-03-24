@@ -1,10 +1,13 @@
 const express = require('express');
 const deck = require('../models/Deck');
 
+const GameRouter = require('./Game');
 
 
 function SocketRouter(io) {
     const router = express.Router();
+
+    router.use('/game', GameRouter(io));
 
     router.get('/', (req, res) => {
         res.send("eieiei");
