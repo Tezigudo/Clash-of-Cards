@@ -11,6 +11,7 @@
 
 const express = require('express');
 const GameController = require('../controllers/GameController');
+const CatchError = require('../handlers/errorhandler');
 
 function GameRouter(io) {
     const router = express.Router();
@@ -18,12 +19,20 @@ function GameRouter(io) {
 
     router.post('/createRoom', async (req, res) => {
 
-
-        room = await gameController.CreateRoom(req, res);
+        try { room = await gameController.CreateRoom(req, res); }
+        catch (err) {
+            console.error(err);
+            res.json({ message: "$Error creating room", error: err }).status(500);
+            return
+        }
 
         // io.emit('createGame', req.body);
-        io.emit('createGame', room);
+        io.emit('createGameRoom', room);
+
         res.json({ message: `Room ID: ${room.roomId} has been created` }).status(200);
+
+        res.payload = room;
+        res.redirect(`/${room.roomId}`);
     });
 
     return router;

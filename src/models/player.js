@@ -24,11 +24,16 @@ const PlayerSchema = new Schema({
         type: Array,
         default: []
     },
-    status:{
+    status: {
         type: String,
-        enum: ['Online', 'Playing','Offline'],
+        enum: ['Online', 'waiting', 'Playing', 'Offline'],
         default: 'Offline'
     }
 });
+
+PlayerSchema.methods.setStatus = function (status) {
+    this.status = status;
+    this.save();
+}
 
 module.exports = Player = mongoose.model('player', PlayerSchema);

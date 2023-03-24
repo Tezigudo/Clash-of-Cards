@@ -18,7 +18,6 @@ class GameRoomService {
 
     async getAllRoomsIds() {
         try {
-            console.log(GameRoom)
             const rooms = await GameRoom.find({}, { roomId: 1, _id: 0 });
             const roomIds = rooms.map(room => room.roomId);
             return roomIds;
@@ -29,10 +28,17 @@ class GameRoomService {
     }
 
     async createGameRoom(name, player1_id) {
+        const player = await Player.findById(player1_id)
 
-        if (! await Player.findById(player1_id)) {
-            throw new Error("Player does not exist");
+        if (!player) {
+            throw `Player with id ${player1_id} does not exist`
         }
+        console.log(player.status)
+
+        if (player.status == 'waiting') {
+            throw `Player with id ${player1_id} is already in a room`
+        }
+
 
         const all_rooms = await this.getAllRoomsIds();
         let roomId = undefined;
@@ -42,6 +48,11 @@ class GameRoomService {
                 break;
             }
         }
+
+        player.setStatus('waiting'); // set player status to waiting
+        console.log(player)
+
+
         return await GameRoom.create({
             roomId: roomId,
             name: name,

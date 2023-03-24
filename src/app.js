@@ -38,6 +38,14 @@ app.get('/register', (req, res) => {
     res.render("register");
 })
 
+app.get('/:roomId', loginRequired, verifyToken, (req, res) => {
+    res.locals.token = req.cookies.token;
+    res.render("game", {
+        name: req.payload.name,
+        id: req.payload.id,
+        roomId: req.params.roomId
+    });
+})
 
 
 module.exports = app;

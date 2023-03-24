@@ -7,6 +7,8 @@ const GameRouter = require('./Game');
 function SocketRouter(io) {
     const router = express.Router();
 
+
+
     router.use('/game', GameRouter(io));
 
     router.get('/', (req, res) => {
