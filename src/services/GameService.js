@@ -32,7 +32,6 @@ class GameRoomService {
         if (!player) {
             throw `Player with id ${player1_id} does not exist`
         }
-        console.log(player.status)
 
         if (player.status == 'waiting') {
             throw `Player with id ${player1_id} is already in a room`

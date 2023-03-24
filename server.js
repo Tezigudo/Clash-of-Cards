@@ -29,13 +29,35 @@ io.on('connection', (socket) => {
     const userId = socket.decoded_token.userId;
     console.log(`User connected: ${userId}`);
 
+    // setplayer status to online
+    fetch(`/api/user/setstatus/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            status: "Online"
+        })
+    })
+
     // console.log('handshake: ', socket.handshake.auth)
 
     socket.on('disconnect', () => {
         console.log("User disconnected");
+        // setplayer status to Offline
+        fetch(`/api/user/setstatus/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                status: "Offline"
+            })
+        })
     })
 
-    socket.onAny((event, ...args) => {"?"
+    socket.onAny((event, ...args) => {
+        "?"
         console.log(event, args)
     })
 
@@ -43,7 +65,7 @@ io.on('connection', (socket) => {
         io.emit("test", playerName)
     })
 
-    socket.on("createGame", (game) => {});
+    socket.on("createGame", (game) => { });
 });
 
 module.exports = {

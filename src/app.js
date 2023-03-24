@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()) // Set the body parser to json
 
 
-app.use('/user', require('./routes/UserRouter')); // Use the UserRouter (api/user/)
+
 
 // Render the index page
 app.get('/', loginRequired, verifyToken, (req, res) => {

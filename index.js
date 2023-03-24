@@ -9,6 +9,8 @@ const server = require('./server');
 const io = server.io;
 const socketRouter = require('./src/routes/SocketRouter')(io); // Import the SocketRouter
 
+
+
 app.use('/api', socketRouter); // Use the SocketRouter (api/
 
 mongoose.connect(process.env.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true }).then((res) => {

@@ -101,7 +101,7 @@
     logoutBtn.addEventListener('click', async (e) => {
       e.preventDefault(); // prevent the page from reloading
 
-      const resp = await fetch('/user/logout', {
+      const resp = await fetch('/api/user/logout', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

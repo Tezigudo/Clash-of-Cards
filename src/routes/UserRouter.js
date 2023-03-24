@@ -1,9 +1,22 @@
-const router = require('express').Router();
+const express = require('express')
 const CatchError = require('../handlers/errorhandler');
-const UserController = require('../controllers/UserController');
+const { register, login, logout } = require('../controllers/UserController');
+const PlayerController = require('../controllers/PlayerController');
 
-router.post("/register", CatchError(UserController.register));
-router.post("/login", CatchError(UserController.login));
-router.get("/logout", CatchError(UserController.logout));
+function UserRouter(io) {
 
-module.exports = router;
+    const router = express.Router();
+    const playerController = new PlayerController();
+
+    router.post("/register", CatchError(register));
+    router.post("/login", CatchError(login));
+    router.get("/logout", CatchError(logout));
+
+    router.put("/setstatus/:player_id", (req, res)=>playerController.setStatus(req, res));
+
+    return router;
+
+
+}
+
+module.exports = UserRouter;
