@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const io = socketIO(server, {
     cors: {
         origin: "*",
-        method: ["GET", "POST"]
+        method: ["GET", "POST", "PUT"]
     }
 });
 

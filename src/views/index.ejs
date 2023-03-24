@@ -137,16 +137,15 @@
         })
 
       })
-      console.log(resp)
 
       if (!resp.ok) {
         alert("Can't create room:" + resp.status)
-        // window.location.reload();
+        window.location.reload();
       } else {
-        const data = await resp.json();
+        const data = resp.json();
         console.log(data)
 
-        window.location.href = `/<%=roomId %>`;
+        window.location.href = `/${resp.roomId}`;
       }
     });
 

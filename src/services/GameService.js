@@ -50,7 +50,6 @@ class GameRoomService {
         }
 
         player.setStatus('waiting'); // set player status to waiting
-        console.log(player)
 
 
         return await GameRoom.create({
