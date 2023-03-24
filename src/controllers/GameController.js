@@ -16,9 +16,14 @@ class GameController {
 
     }
 
+    async ListAllRooms(req, res) {
+        return await this.gameService.getAllRooms();
+    }
+
     async JoinRoom(req, res) {
         // to be implemented
     }
+
 }
 
 module.exports = GameController;

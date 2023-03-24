@@ -15,6 +15,11 @@
 
   <button id="btn">Click me</button>
   <button id="logoutBtn">Log out</button>
+  <button id="createRoom">Create room</button>
+
+  <ul id="room_list">
+    <!-- this zone id for listing all room that can join -->
+  </ul>
 
   <span id="Testing"></span>
 
@@ -43,6 +48,22 @@
         .on('unauthorized', (error) => {
           console.log('unauthorized: ', JSON.stringify(error.data))
         })
+    })
+
+
+    socket.on('roomCreated', (room) => {
+      const roomList = document.getElementById('room_list');
+      const joinBtn = document.createElement('button');
+      joinBtn.textContent = "Join";
+      const item = document.createElement('li');
+      item.textContent = `${room.name}: ${room.id}`
+      roomList.appendChild(item);
+      roomList.appendChild(joinBtn);
+      joinBtn.addEventListener('click', () => {
+        socket.emit('joinRoom', room.id);
+      })
+
+      console.log('roomCreated', room)
     })
 
     socket.on("connect_error", (err) => {
@@ -89,6 +110,7 @@
       })
 
       if (!resp.ok) {
+        alert(resp.body)
         window.location.reload();
       } else {
         const data = await resp.json();
@@ -98,6 +120,47 @@
       socket.emit('logout');
     });
 
+    const createRoombtn = document.getElementById('createRoom');
+
+
+    createRoombtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // prevent the page from reloading
+
+      const resp = await fetch('/api/game/createroom', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: "<%=name %>",
+          player1_id: "<%=id %>"
+        })
+
+      })
+      console.log(resp)
+
+      if (!resp.ok) {
+        alert("Can't create room:" + resp.status)
+        // window.location.reload();
+      } else {
+        const data = await resp.json();
+        console.log(data)
+
+        window.location.href = `/<%=roomId %>`;
+      }
+    });
+
+    // list of all room that can join
+    fetch('/api/game/roomList')
+      .then((response) => response.json())
+      .then((data) => {
+        const roomList = document.getElementById('room_list');
+        data.forEach((room) => {
+          const item = document.createElement('li');
+          item.textContent = `${room.name}: ${room.id}`
+          roomList.appendChild(item);
+        })
+      })
 
   </script>
 </body>

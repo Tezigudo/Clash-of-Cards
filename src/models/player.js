@@ -36,4 +36,5 @@ PlayerSchema.methods.setStatus = function (status) {
     this.save();
 }
 
+
 module.exports = Player = mongoose.model('player', PlayerSchema);

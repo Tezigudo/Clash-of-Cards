@@ -16,11 +16,10 @@ class GameRoomService {
         return id;
     }
 
-    async getAllRoomsIds() {
+    async getAllRooms() {
         try {
             const rooms = await GameRoom.find({}, { roomId: 1, _id: 0 });
-            const roomIds = rooms.map(room => room.roomId);
-            return roomIds;
+            return rooms;
         } catch (error) {
             console.error(error);
             throw error;
@@ -40,11 +39,12 @@ class GameRoomService {
         }
 
 
-        const all_rooms = await this.getAllRoomsIds();
+        const all_room = await this.getAllRooms();
+        const all_room_id = all_room.map(room => room.roomId);
         let roomId = undefined;
         while (true) {
             roomId = this.makeid();
-            if (!all_rooms.includes(roomId)) {
+            if (!all_room_id.includes(roomId)) {
                 break;
             }
         }

@@ -15,7 +15,7 @@ async function verifyToken(req, res, next) {
         res.clearCookie('token'); // clear cookie ( so user will logout)
         res.redirect('/login')
         res.status(401).json({
-            message: "Forbidden"
+            message: "Frbidden"
         })
 
     }

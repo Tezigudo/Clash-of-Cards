@@ -25,7 +25,7 @@ app.use('/user', require('./routes/UserRouter')); // Use the UserRouter (api/use
 // Render the index page
 app.get('/', loginRequired, verifyToken, (req, res) => {
     res.locals.token = req.cookies.token;
-    res.render("index", { name: req.payload.name, id: req.payload.id });
+    res.render("index", { name: req.payload.name, id: req.payload.id, roomId: "" });
 });
 
 // Render the login page
