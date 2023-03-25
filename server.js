@@ -4,6 +4,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 const socketioJwt = require('socketio-jwt');
 
+const setStatus = require("./src/utils/PlayerUtils").setStatus;
 const app = require('./src/app');
 
 const server = http.createServer(app);
@@ -26,34 +27,18 @@ server.listen(3000, () => {
 });
 
 io.on('connection', (socket) => {
-    const userId = socket.decoded_token.userId;
+    const userId = socket.decoded_token.id;
     console.log(`User connected: ${userId}`);
 
     // setplayer status to online
-    fetch(`/api/user/setstatus/${userId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            status: "Online"
-        })
-    })
+    setStatus(userId, "Online")
 
     // console.log('handshake: ', socket.handshake.auth)
 
     socket.on('disconnect', () => {
         console.log("User disconnected");
         // setplayer status to Offline
-        fetch(`/api/user/setstatus/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                status: "Offline"
-            })
-        })
+        setStatus(userId, "Offline")
     })
 
     socket.onAny((event, ...args) => {

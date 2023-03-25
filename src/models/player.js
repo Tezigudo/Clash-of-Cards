@@ -26,7 +26,7 @@ const PlayerSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['Online', 'waiting', 'Playing', 'Offline'],
+        enum: ['Online', 'Waiting', 'Playing', 'Offline'],
         default: 'Offline'
     }
 });

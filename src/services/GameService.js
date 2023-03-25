@@ -33,7 +33,7 @@ class GameRoomService {
             throw `Player with id ${player1_id} does not exist`
         }
 
-        if (player.status == 'waiting') {
+        if (player.status == 'Waiting') {
             throw `Player with id ${player1_id} is already in a room`
         }
 
