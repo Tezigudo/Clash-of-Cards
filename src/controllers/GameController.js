@@ -21,7 +21,9 @@ class GameController {
     }
 
     async JoinRoom(req, res) {
-        // to be implemented
+        const roomId = req.body.roomId;
+        const player_id = req.body.player_id;
+        
     }
 
 }

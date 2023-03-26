@@ -48,7 +48,7 @@ class GameRoomService {
             }
         }
 
-        player.setStatus('waiting'); // set player status to waiting
+        player.setStatus('Waiting'); // set player status to waiting
 
 
         return await GameRoom.create({
@@ -57,6 +57,39 @@ class GameRoomService {
             players: [player1_id],
         })
 
+
+    }
+
+    async joinGameRoom(roomId, player_id) {
+        const player = await Player.findById(player_id)
+
+        if (!player) {
+            throw `Player with id ${player_id} does not exist`
+        }
+
+        if (player.status == 'Waiting') {
+            throw `Player with id ${player_id} is already in a room`
+        }
+
+        if (player.status == 'Playing') {
+            throw `Player with id ${player_id} is already in a game`
+        }
+
+        const room = await GameRoom.find({ roomId: roomId });
+
+        if (!room) {
+            throw `Room with id ${roomId} does not exist`
+        }
+
+        if (room.players.length == 2) {
+            throw `Room with id ${roomId} is full`
+        }
+
+        player.setStatus('waiting'); // set player status to waiting
+
+        room.addPlayer(player_id);
+
+        return room;
 
     }
 }
