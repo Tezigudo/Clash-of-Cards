@@ -105,7 +105,7 @@ DeckSchema.methods.initDeck = function () {
     // create a deck
     // shuffle the deck
     // return the deck
-    this.createDeck();
+    this.createDeck()
     this.shuffle();
     return this.deck;
 }
