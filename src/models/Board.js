@@ -1,10 +1,13 @@
 const { ObjectId } = require('mongodb');
 const mongoose = require('mongoose');
+const deck = require('./Deck');
+
 const Schema = mongoose.Schema;
 
 const BoardSchema = new Schema({
     playerID: {
         type: ObjectId,
+        ref: 'player',
         required: true
     },
     hp: {
@@ -25,4 +28,8 @@ const BoardSchema = new Schema({
     }
 });
 
-module.exports = Board = mongoose.model('player', BoardSchema);
+BoardSchema.methods.initBoard = function () {
+
+}
+
+module.exports = Board = mongoose.model('board', BoardSchema);

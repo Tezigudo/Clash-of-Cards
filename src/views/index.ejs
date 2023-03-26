@@ -10,10 +10,16 @@
 </head>
 
 <body>
-  <h1>Welcome back <%= name %></h1>
+  <h1>Welcome back <%= name %>
+  </h1>
 
   <button id="btn">Click me</button>
   <button id="logoutBtn">Log out</button>
+  <button id="createRoom">Create room</button>
+
+  <ul id="room_list">
+    <!-- this zone id for listing all room that can join -->
+  </ul>
 
   <span id="Testing"></span>
 
@@ -44,6 +50,22 @@
         })
     })
 
+
+    socket.on('roomCreated', (room) => {
+      const roomList = document.getElementById('room_list');
+      const joinBtn = document.createElement('button');
+      joinBtn.textContent = "Join";
+      const item = document.createElement('li');
+      item.textContent = `${room.name}: ${room.id}`
+      roomList.appendChild(item);
+      roomList.appendChild(joinBtn);
+      joinBtn.addEventListener('click', () => {
+        socket.emit('joinRoom', room.id);
+      })
+
+      console.log('roomCreated', room)
+    })
+
     socket.on("connect_error", (err) => {
       console.log(`connect_error due to ${err.message}`);
     });
@@ -64,13 +86,13 @@
     let i = 1;
 
     btn.addEventListener('click', () => {
-      socket.emit('test');
+      socket.emit('test', "<%-name  %>");
     });
 
-    socket.on("test", (player_name) => {
+    socket.on("test", (playerName) => {
       var TestSpan = document.getElementById('Testing');
       var item = document.createElement('li');
-      item.textContent = `${player_name}: ${i++}`
+      item.textContent = `${playerName}: ${i++}`
       TestSpan.appendChild(item);
     })
 
@@ -79,7 +101,7 @@
     logoutBtn.addEventListener('click', async (e) => {
       e.preventDefault(); // prevent the page from reloading
 
-      const resp = await fetch('/user/logout', {
+      const resp = await fetch('/api/user/logout', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -88,6 +110,7 @@
       })
 
       if (!resp.ok) {
+        alert(resp.body)
         window.location.reload();
       } else {
         const data = await resp.json();
@@ -97,6 +120,46 @@
       socket.emit('logout');
     });
 
+    const createRoombtn = document.getElementById('createRoom');
+
+
+    createRoombtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // prevent the page from reloading
+
+      const resp = await fetch('/api/game/createroom', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: "<%=name %>",
+          player1_id: "<%=id %>"
+        })
+
+      })
+
+      if (!resp.ok) {
+        alert("Can't create room:" + resp.status)
+        window.location.reload();
+      } else {
+        const data = resp.json();
+        console.log(data)
+
+        window.location.href = `/${resp.roomId}`;
+      }
+    });
+
+    // list of all room that can join
+    fetch('/api/game/roomList')
+      .then((response) => response.json())
+      .then((data) => {
+        const roomList = document.getElementById('room_list');
+        data.forEach((room) => {
+          const item = document.createElement('li');
+          item.textContent = `${room.name}: ${room.id}`
+          roomList.appendChild(item);
+        })
+      })
 
   </script>
 </body>
