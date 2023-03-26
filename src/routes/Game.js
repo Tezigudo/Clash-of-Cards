@@ -10,7 +10,7 @@ function GameRouter(io) {
         try { room = await gameController.CreateRoom(req, res); }
         catch (err) {
             console.error(err);
-            res.json({ message: "$Error creating room", error: err }).status(500);
+            res.status(400).json({ message: "$Error creating room", error: err });
             return
         }
 
